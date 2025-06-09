@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!-- URDF DESCRIPTION OF THE DIFFERENTIAL DRIVE ROBOT -->
+
+<robot name="simple_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Include additional files -->
+    <!-- Here, we include the model parameters -->
+    <xacro:include filename="$(find demo_control)/model/parameters.xacro" />
+    <xacro:include filename="$(find demo_control)/model/gazebo.xacro" />
+
+    <!-- FROM HERE WE DEFINE LINKS, JOINTS -->
+
+    <!-- START: World link and fixed joint -->
+    <!-- We need to define the first link and frame as a world-->
+    <link name="world" />
+
+    <joint name="fixed_joint" type="fixed">
+        <parent link="world"/>
+        <child link="first_link"/>
+    </joint>
+    <!-- END: World link and fixed joint -->
+
+    <!-- START: First link of the robot -->
+    <link name="first_link">
+        <visual>
+            <geometry>
+                <box size="${a} ${b} ${c}" />
+            </geometry>
+            <!-- Displacement and orientation of the geometric center of the link with respect to the origin -->
+            <origin rpy="0 0 0" xyz="0 0 ${s}"/>
+            <material name="red" />
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${a} ${b} ${c}" />
+            </geometry>
+            <origin rpy="0 0 0" xyz="0 0 ${s}"/>
+        </collision>
+        <xacro:inertia_body/>
+    </link>
+    <!-- END: First link of the robot -->
+
+    <!-- START: Second link of the robot and the first joint -->
+    <joint name="first_joint" type="revolute">
+        <parent link="first_link"/>
+        <child link="second_link"/>
+        <origin xyz="0 ${b} ${q}" rpy="0 0 0" />
+        <axis xyz="0 1 0"/>
+        <limit effort="5000" velocity="10" lower="-1.571" upper="1.571" />
+        <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <link name="second_link">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 ${s}"/>
+            <geometry>
+                <box size="${a} ${b} ${c}" />
+            </geometry>
+            <material name="blue" />
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 ${s}"/>
+            <geometry>
+                <box size="${a} ${b} ${c}" />
+            </geometry>
+        </collision>
+        <xacro:inertia_body/>
+    </link>
+    <!-- END: Second link of the robot and the joint -->
+
+    <!-- START: ROS2 Control Plugins and Definitions -->
+    <ros2_control name="RobotController" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        
+        <joint name="first_joint">
+            <command_interface name="position">
+                <param name="min">-1.571</param>
+                <param name="max">1.571</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+    </ros2_control>
+    <!-- END: ROS2 Control Plugins and Definitions -->
+
+</robot>

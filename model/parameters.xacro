@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- Robot model parameters -->
+
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- link dimensions -->
+<xacro:property name="a" value="0.1" />
+<xacro:property name="b" value="0.1" />
+<xacro:property name="c" value="0.8"/>
+
+<!-- center of the mass location and center of the link with respect to the link frame -->
+<xacro:property name="s" value="${c/2}"/>
+
+<!-- first joint displacement in the Z axis direction -->
+<xacro:property name="q" value="${c-c/4}"/>
+
+<!-- material density -->
+<xacro:property name="d" value="2710.0"/>
+
+<!-- mass density times volume -->
+<xacro:property name="m" value="${d*a*b*c}"/>
+
+<!-- link moments of inertia -->
+<xacro:property name="Ix_body" value="${(1/12)*m*(b*b+c*c) }" />
+<xacro:property name="Iy_body" value="${(1/12)*m*(a*a+b*b) }" />
+<xacro:property name="Iz_body" value="${(1/12)*m*(a*a+c*c) }" />
+
+<!-- This macro defines the complete inertial section of the robot body-->
+<xacro:macro name="inertia_body">
+    <inertial>
+        <!-- Displacement and orientation of the center of the mass frame of the link with respect to the link frame -->
+        <origin rpy="0 0 0" xyz="0 0 ${s}"/>
+        <mass value="${m}"/>
+        <inertia ixx="${Ix_body}" ixy="0.0" ixz="0.0" iyy="${Iy_body}" iyz="0" izz="${Iz_body}" />
+    </inertial>
+</xacro:macro>
+
+<!-- Colors -->
+<material name="blue">
+    <color rgba="0 0 1 1"/>
+</material>
+
+<material name="red">
+    <color rgba="1 0 0 1"/>
+</material>
+
+</robot>
