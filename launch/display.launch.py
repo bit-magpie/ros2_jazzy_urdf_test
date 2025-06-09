@@ -82,6 +82,13 @@ def generate_launch_description():
         ]
     )
 
+    # joint state publisher node (needed for revolute joints)
+    joint_state_publisher_node = launch_ros.actions.Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        output='screen'
+    )
+
     # robot state publisher node
     robot_state_publisher_node = launch_ros.actions.Node(
         package='robot_state_publisher',
@@ -124,6 +131,7 @@ def generate_launch_description():
         gazebo_headless,
         gazebo_bridge,
         gz_spawn_entity,
+        joint_state_publisher_node,
         robot_state_publisher_node,
         rviz_node,
         control_node,
